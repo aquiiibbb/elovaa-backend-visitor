@@ -6,7 +6,7 @@ const visitorSchema = new mongoose.Schema(
     email: { type: String, required: true, trim: true, lowercase: true },
     phone: { type: String, required: true, trim: true },
     purpose: { type: String, required: true, trim: true },
-    // Photo MongoDB me hi save hoti hai (hosting par file storage nahi chahiye)
+    // Photo stored directly in MongoDB as binary buffer
     photo: {
       type: { data: Buffer, contentType: String },
       select: false,

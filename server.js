@@ -6,7 +6,7 @@ const cors = require('cors');
 const app = express();
 app.set('trust proxy', 1);
 
-// FRONTEND_URL me frontend ka link daalo (comma se multiple). Khali ho to sab allowed (sirf testing ke liye)
+// Allowed frontend origins from FRONTEND_URL environment variable
 const origins = (process.env.FRONTEND_URL || '')
   .split(',')
   .map((s) => s.trim().replace(/\/$/, ''))
@@ -23,7 +23,7 @@ const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
 if (!MONGO_URI) {
-  console.error('MONGO_URI missing. backend/.env me MongoDB Atlas URI daalo.');
+  console.error('MONGO_URI missing. Please set MONGO_URI in your environment variables.');
   process.exit(1);
 }
 

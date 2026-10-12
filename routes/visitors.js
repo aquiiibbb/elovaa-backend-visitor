@@ -18,14 +18,14 @@ router.post('/checkin', async (req, res) => {
   try {
     const { name, email, phone, purpose, photo } = req.body;
     if (!name || !email || !phone || !purpose)
-      return res.status(400).json({ message: 'Name, email, phone aur purpose zaroori hai' });
+      return res.status(400).json({ message: 'Name, email, phone, and purpose are required.' });
 
     const img = parsePhoto(photo);
-    if (!img) return res.status(400).json({ message: 'Camera se photo click karna zaroori hai' });
+    if (!img) return res.status(400).json({ message: 'A photo capture is required.' });
 
     const active = await Visitor.findOne({ phone: phone.trim(), status: 'checked-in' });
     if (active)
-      return res.status(400).json({ message: 'Is phone number se pehle se check-in hai. Pehle check-out karo.' });
+      return res.status(400).json({ message: 'This phone number already has an active check-in. Please check out first.' });
 
     const v = await Visitor.create({ name, email, phone, purpose, photo: img, hasPhoto: true });
     res.status(201).json({ message: 'Check-in successful', visitor: { _id: v._id, name: v.name } });
@@ -38,14 +38,14 @@ router.post('/checkin', async (req, res) => {
 router.post('/checkout', async (req, res) => {
   try {
     const phone = String(req.body.phone || '').trim();
-    if (!phone) return res.status(400).json({ message: 'Phone number zaroori hai' });
+    if (!phone) return res.status(400).json({ message: 'Phone number is required.' });
 
     const v = await Visitor.findOneAndUpdate(
       { phone, status: 'checked-in' },
       { status: 'checked-out', checkOutTime: new Date() },
       { new: true, sort: { checkInTime: -1 } }
     ).select('-photo');
-    if (!v) return res.status(404).json({ message: 'Is phone number se koi active check-in nahi mila' });
+    if (!v) return res.status(404).json({ message: 'No active check-in found for this phone number.' });
     res.json({ message: 'Check-out successful', visitor: v });
   } catch (err) {
     res.status(500).json({ message: err.message });
