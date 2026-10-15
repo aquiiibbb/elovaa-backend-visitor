@@ -3,7 +3,7 @@ const { sign, requireAuth } = require('../middleware');
 
 const router = express.Router();
 
-const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'elovaaacadmy@gmail.com').toLowerCase();
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'elovaabeautyacademy@gmail.com').toLowerCase();
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'elovaa#012';
 
 // simple brute-force protection: 10 failed attempts / 15 min / IP

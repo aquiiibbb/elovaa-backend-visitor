@@ -38,13 +38,22 @@ router.post('/checkin', async (req, res) => {
 router.post('/checkout', async (req, res) => {
   try {
     const phone = String(req.body.phone || '').trim();
+    const photo = req.body.photo;
     if (!phone) return res.status(400).json({ message: 'Phone number is required.' });
+
+    const img = parsePhoto(photo);
+    if (!img) return res.status(400).json({ message: 'A photo capture is required to check out.' });
 
     const v = await Visitor.findOneAndUpdate(
       { phone, status: 'checked-in' },
-      { status: 'checked-out', checkOutTime: new Date() },
+      { 
+        status: 'checked-out', 
+        checkOutTime: new Date(),
+        checkOutPhoto: img,
+        hasCheckOutPhoto: true 
+      },
       { new: true, sort: { checkInTime: -1 } }
-    ).select('-photo');
+    ).select('-photo -checkOutPhoto');
     if (!v) return res.status(404).json({ message: 'No active check-in found for this phone number.' });
     res.json({ message: 'Check-out successful', visitor: v });
   } catch (err) {
@@ -55,14 +64,14 @@ router.post('/checkout', async (req, res) => {
 // DASHBOARD LIST
 router.get('/', async (req, res) => {
   try {
-    const list = await Visitor.find().select('-photo').sort({ checkInTime: -1 }).limit(2000);
+    const list = await Visitor.find().select('-photo -checkOutPhoto').sort({ checkInTime: -1 }).limit(2000);
     res.json(list);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// PHOTO
+// CHECK-IN PHOTO
 router.get('/:id/photo', async (req, res) => {
   try {
     const v = await Visitor.findById(req.params.id).select('photo');
@@ -70,6 +79,19 @@ router.get('/:id/photo', async (req, res) => {
     res.set('Content-Type', v.photo.contentType);
     res.set('Cache-Control', 'private, max-age=86400');
     res.send(v.photo.data);
+  } catch {
+    res.status(404).end();
+  }
+});
+
+// CHECK-OUT PHOTO
+router.get('/:id/checkout-photo', async (req, res) => {
+  try {
+    const v = await Visitor.findById(req.params.id).select('checkOutPhoto');
+    if (!v || !v.checkOutPhoto || !v.checkOutPhoto.data) return res.status(404).end();
+    res.set('Content-Type', v.checkOutPhoto.contentType);
+    res.set('Cache-Control', 'private, max-age=86400');
+    res.send(v.checkOutPhoto.data);
   } catch {
     res.status(404).end();
   }

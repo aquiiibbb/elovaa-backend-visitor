@@ -16,9 +16,10 @@ Server runs at: `http://localhost:5000` (Health Check: `http://localhost:5000/ap
 |---|---|---|---|
 | POST | `/api/auth/login` | None | Admin authentication (`email`, `password`) -> JWT token |
 | POST | `/api/visitors/checkin` | Bearer token | Visitor check-in (`name`, `email`, `phone`, `purpose`, `photo`) |
-| POST | `/api/visitors/checkout` | Bearer token | Visitor check-out by `phone` |
+| POST | `/api/visitors/checkout` | Bearer token | Visitor check-out (`phone`, `photo`) |
 | GET | `/api/visitors` | Bearer token | Fetch all visitor records for dashboard |
-| GET | `/api/visitors/:id/photo` | Token query/header | Fetch high-resolution visitor photo |
+| GET | `/api/visitors/:id/photo` | Token query/header | Fetch high-resolution visitor check-in photo |
+| GET | `/api/visitors/:id/checkout-photo` | Token query/header | Fetch high-resolution visitor check-out photo |
 
 ## Deployment (Render)
 1. Repository: [https://github.com/aquiiibbb/elovaa-backend-visitor](https://github.com/aquiiibbb/elovaa-backend-visitor)

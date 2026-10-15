@@ -6,12 +6,17 @@ const visitorSchema = new mongoose.Schema(
     email: { type: String, required: true, trim: true, lowercase: true },
     phone: { type: String, required: true, trim: true },
     purpose: { type: String, required: true, trim: true },
-    // Photo stored directly in MongoDB as binary buffer
+    // Photos stored directly in MongoDB as binary buffer
     photo: {
       type: { data: Buffer, contentType: String },
       select: false,
     },
     hasPhoto: { type: Boolean, default: false },
+    checkOutPhoto: {
+      type: { data: Buffer, contentType: String },
+      select: false,
+    },
+    hasCheckOutPhoto: { type: Boolean, default: false },
     checkInTime: { type: Date, default: Date.now },
     checkOutTime: { type: Date, default: null },
     status: { type: String, enum: ['checked-in', 'checked-out'], default: 'checked-in' },
