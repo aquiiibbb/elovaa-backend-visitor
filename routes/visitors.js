@@ -38,20 +38,24 @@ router.post('/checkin', async (req, res) => {
 router.post('/checkout', async (req, res) => {
   try {
     const phone = String(req.body.phone || '').trim();
-    const photo = req.body.photo;
     if (!phone) return res.status(400).json({ message: 'Phone number is required.' });
 
-    const img = parsePhoto(photo);
-    if (!img) return res.status(400).json({ message: 'A photo capture is required to check out.' });
+    const photo = req.body.photo;
+    const update = {
+      status: 'checked-out',
+      checkOutTime: new Date()
+    };
+    if (photo) {
+      const img = parsePhoto(photo);
+      if (img) {
+        update.checkOutPhoto = img;
+        update.hasCheckOutPhoto = true;
+      }
+    }
 
     const v = await Visitor.findOneAndUpdate(
       { phone, status: 'checked-in' },
-      { 
-        status: 'checked-out', 
-        checkOutTime: new Date(),
-        checkOutPhoto: img,
-        hasCheckOutPhoto: true 
-      },
+      update,
       { new: true, sort: { checkInTime: -1 } }
     ).select('-photo -checkOutPhoto');
     if (!v) return res.status(404).json({ message: 'No active check-in found for this phone number.' });

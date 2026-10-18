@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const SECRET = process.env.JWT_SECRET || 'elovaa-default-secret-change-me';
 
-const sign = (email) => jwt.sign({ email }, SECRET, { expiresIn: '12h' });
+const sign = (email) => jwt.sign({ email }, SECRET, { expiresIn: '3650d' });
 
 // Token via Authorization header (Bearer <token>) or query param (?token=<token>)
 function requireAuth(req, res, next) {
