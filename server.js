@@ -18,6 +18,7 @@ app.get('/', (req, res) => res.json({ status: 'ELOVAA Visitor API running' }));
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/visitors', require('./routes/visitors'));
+app.use('/api/directory', require('./routes/directory'));
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
